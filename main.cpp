@@ -1,6 +1,7 @@
 #include <iostream>
 #include "situation/Instance.h"
 
+//TODO : add Vehicles
 
 int main() {
     int numberOfShipping = 10;

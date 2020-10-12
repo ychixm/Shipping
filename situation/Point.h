@@ -30,7 +30,7 @@ private:
 
     friend std::ostream& operator<<(std::ostream& os,Point p);
 };
-
+/// Calc distance from points coordinates.
 float distance(Point a,Point b);
 
 #endif //SHIPPING_POINT_H

@@ -49,6 +49,10 @@ std::ostream &operator<<(std::ostream &os, const Instance& i) {
     return os;
 }
 
+/**
+* generate the distance matrix with the depot and shipping points in the Instance class
+*
+*/
 void Instance::generateDistanceMatrix() {
     std::list<float> tmp;
 
@@ -68,7 +72,14 @@ void Instance::generateDistanceMatrix() {
         m_distanceMatrix.emplace_back(calculateDistance(s,'d'));
         }
 }
+/**
+* create a list with the distance between a Point and all the others
+*
+* @param
+* @return
+*/
 
+//TODO : add condition like go from the destination to the origin is useless give "infinite" distance
 std::list<float> Instance::calculateDistance(const Shipping& s,char c){
     Point actualPos;
     switch(c){

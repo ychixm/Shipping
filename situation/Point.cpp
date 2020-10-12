@@ -1,6 +1,12 @@
 
 #include "Point.h"
 
+/**
+* Calc distance from points coordinates.
+*
+* @param two Point.
+* @return distance between the two points as a float.
+*/
  float distance(Point a,Point b){
     return sqrt(pow((b.getX()-a.getX()),2)+pow((b.getY()-a.getY()),2));
 }
