@@ -2,7 +2,7 @@
 
  float distance(Point a,Point b){
     float tmp = sqrt(pow((b.getX()-a.getX()),2)+pow((b.getY()-a.getY()),2));
-    std::cout << a << " ; "<< b << " ; " << tmp  << std::endl << std::endl;
+    //std::cout << a << " ; "<< b << " ; " << tmp  << std::endl << std::endl;
     return sqrt(pow((b.getX()-a.getX()),2)+pow((b.getY()-a.getY()),2));
 }
 
