@@ -1,7 +1,8 @@
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <ostream>
+#include <iomanip>
 
 #ifndef SHIPPING_POINT_H
 #define SHIPPING_POINT_H
@@ -31,7 +32,5 @@ private:
 };
 
 float distance(Point a,Point b);
-
-
 
 #endif //SHIPPING_POINT_H

@@ -96,7 +96,7 @@ std::list<float> Instance::calculateDistance(const Shipping& s,char c){
 void Instance::showDestinationMatrix() {
     for(auto i : m_distanceMatrix){
         for(auto j : i){
-            std::cout << j << ',';
+            std::cout<< std::setw(7) << j << " ; ";
         }
         std::cout << std::endl;
     }
