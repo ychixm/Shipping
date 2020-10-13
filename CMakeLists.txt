@@ -3,4 +3,4 @@ project(shipping)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(shipping main.cpp situation/Point.cpp situation/Point.h situation/Instance.cpp situation/Instance.h situation/Shipping.cpp situation/Shipping.h)
+add_executable(shipping main.cpp situation/Point.cpp situation/Point.h situation/Instance.cpp situation/Instance.h situation/Shipping.cpp situation/Shipping.h toolBox/StopWatch.h)
