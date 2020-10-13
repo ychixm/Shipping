@@ -50,7 +50,7 @@ std::ostream &operator<<(std::ostream &os, const Instance& i) {
 }
 
 /**
-* generate the distance matrix with the depot and shipping points in the Instance class
+* generate the distance matrix with the depot and shipping points in the Instance class.
 *
 */
 void Instance::generateDistanceMatrix() {
@@ -73,13 +73,12 @@ void Instance::generateDistanceMatrix() {
         }
 }
 /**
-* create a list with the distance between a Point and all the others
+* create a list with the distance between a Point and all the others.
 *
-* @param
-* @return
+* @param a Shipping and char to say if we calc for origin or destination.
+* @return list of distance as float.
 */
 
-//TODO : add condition like go from the destination to the origin is useless give "infinite" distance
 std::list<float> Instance::calculateDistance(const Shipping& s,char c){
     Point actualPos;
     switch(c){
@@ -99,7 +98,12 @@ std::list<float> Instance::calculateDistance(const Shipping& s,char c){
 
     for(const auto& destinationPoint: m_shippingPoints){
         tmp.emplace_back(distance(actualPos,destinationPoint.getOrigin()));
-        tmp.emplace_back(distance(actualPos,destinationPoint.getDestination()));
+        ///if it's the same Shipping and you want to calculate the distance to go from destination to origin you can't.
+        if(destinationPoint == s && c =='o'){
+            tmp.emplace_back(INT_MAX);
+        } else{
+            tmp.emplace_back(distance(actualPos,destinationPoint.getDestination()));
+        }
     }
     return tmp;
 }
@@ -107,7 +111,7 @@ std::list<float> Instance::calculateDistance(const Shipping& s,char c){
 void Instance::showDestinationMatrix() {
     for(auto i : m_distanceMatrix){
         for(auto j : i){
-            std::cout<< std::setw(7) << j << " ; ";
+            std::cout<< std::setw(11) << j << " ; ";
         }
         std::cout << std::endl;
     }

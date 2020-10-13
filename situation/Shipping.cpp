@@ -1,5 +1,7 @@
 #include "Shipping.h"
 
+#include <utility>
+
 const Point &Shipping::getOrigin() const {
     return m_origin;
 }
@@ -25,14 +27,23 @@ void Shipping::setName(const std::string &Name) {
 }
 
 
-Shipping::Shipping(Point &a,Point &b):m_origin(a),m_destination(b),m_name("") {}
+Shipping::Shipping(Point &a,Point &b):m_origin(a),m_destination(b){}
 Shipping::Shipping(Point &a, Point &b, std::string &name):m_origin(a),m_destination(b),m_name(name) {}
 Shipping::Shipping(Point a, Point b):m_origin(a),m_destination(b){}
-Shipping::Shipping(Point a, Point b, std::string name):m_origin(a),m_destination(b),m_name(name) {
+Shipping::Shipping(Point a, Point b, std::string name):m_origin(a),m_destination(b),m_name(std::move(name)) {
 
 }
 
 std::ostream &operator<<(std::ostream &os, Shipping s) {
     os << s.getName() << ", origin: "<< s.getOrigin() <<", destination: "<< s.getDestination() << std::endl;
     return os;
+}
+
+bool operator==(Shipping const& a, Shipping const& b) {
+    if(a.getName() == b.getName()){
+        return true  ;
+    }
+    else{
+        return false;
+    }
 }

@@ -6,8 +6,6 @@
 
 class Shipping {
 private:
-    Shipping(Point a, Point b, std::string &name);
-
     Point m_origin;
     Point m_destination;
     std::string m_name;
@@ -32,6 +30,8 @@ public:
     void setName(const std::string &Name);
 
     friend std::ostream& operator<<(std::ostream& os,Shipping s);
+    ///the comparison is only on the name of the shipping.
+    friend bool operator==(Shipping const& a, Shipping const& b);
 };
 
 
