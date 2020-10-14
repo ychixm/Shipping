@@ -3,7 +3,6 @@
 
 #define GENERATE_RANDOM_POINT  d(g)
 
-
 Instance::Instance(int &number_of_shipping,int &mapSize) {
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -14,7 +13,7 @@ Instance::Instance(int &number_of_shipping,int &mapSize) {
         m_shippingPoints.emplace_back(Shipping(Point(GENERATE_RANDOM_POINT, GENERATE_RANDOM_POINT),
                                                Point( GENERATE_RANDOM_POINT, GENERATE_RANDOM_POINT),
                                                std::to_string(i)
-                                              ));
+        ));
     }
 }
 const Point &Instance::getDepot() const {
@@ -70,7 +69,7 @@ void Instance::generateDistanceMatrix() {
 
         m_distanceMatrix.emplace_back(calculateDistance(s,'o'));
         m_distanceMatrix.emplace_back(calculateDistance(s,'d'));
-        }
+    }
 }
 /**
 * create a list with the distance between a Point and all the others.
@@ -109,7 +108,7 @@ std::list<float> Instance::calculateDistance(const Shipping& s,char c){
 }
 
 void Instance::showDestinationMatrix() {
-    for(auto i : m_distanceMatrix){
+    for(const auto& i : m_distanceMatrix){
         for(auto j : i){
             std::cout<< std::setw(11) << j << " ; ";
         }

@@ -14,7 +14,7 @@ int main() {
     rand.generateDistanceMatrix();
     rand.showDestinationMatrix();
 
-    std::cout << "time to compute : "<< timer.elapsed_time() << std::endl;
+    std::cout << "time to compute : "<< timer.elapsed_time() << " ms" << std::endl;
 
     return 0;
 }

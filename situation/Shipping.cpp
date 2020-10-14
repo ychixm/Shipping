@@ -26,7 +26,6 @@ void Shipping::setName(const std::string &Name) {
     m_name = Name;
 }
 
-
 Shipping::Shipping(Point &a,Point &b):m_origin(a),m_destination(b){}
 Shipping::Shipping(Point &a, Point &b, std::string &name):m_origin(a),m_destination(b),m_name(name) {}
 Shipping::Shipping(Point a, Point b):m_origin(a),m_destination(b){}
@@ -34,7 +33,7 @@ Shipping::Shipping(Point a, Point b, std::string name):m_origin(a),m_destination
 
 }
 
-std::ostream &operator<<(std::ostream &os, Shipping s) {
+std::ostream &operator<<(std::ostream &os, const Shipping& s) {
     os << s.getName() << ", origin: "<< s.getOrigin() <<", destination: "<< s.getDestination() << std::endl;
     return os;
 }

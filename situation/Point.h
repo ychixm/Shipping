@@ -7,7 +7,6 @@
 #ifndef SHIPPING_POINT_H
 #define SHIPPING_POINT_H
 
-
 class Point {
 
 private:
