@@ -5,6 +5,7 @@
 #include <random>
 #include <list>
 #include <iostream>
+#include <fstream>
 #include "Point.h"
 #include "Shipping.h"
 
@@ -31,6 +32,10 @@ public:
     std::list<float> calculateDistance(const Shipping& s,char c);
 
     void showDestinationMatrix();
+
+    void writeTofile(Instance& instance);
+
+    void writeDestiantionTofile(Instance& instance, std::ofstream& write);
 
 public:
     Instance(int &number_of_shipping,int &mapSize);
