@@ -11,9 +11,10 @@ int main() {
     Instance rand(numberOfShipping,mapSize);
 
     std::cout << rand << std::endl;
+
     rand.generateDistanceMatrix();
     rand.showDestinationMatrix();
-
+    rand.writeTofile(rand);
     std::cout << "time to compute : "<< timer.elapsed_time() << " ms" << std::endl;
 
     return 0;

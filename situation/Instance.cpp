@@ -115,3 +115,19 @@ void Instance::showDestinationMatrix() {
         std::cout << std::endl;
     }
 }
+
+void Instance::writeTofile(Instance& instance) {
+    Instance &i =instance;
+    std::ofstream  file {"text.txt"};
+    file<<i<<std::endl;
+    writeDestiantionTofile(instance,file);
+
+}
+void Instance::writeDestiantionTofile(Instance &instance, std::ofstream& write) {
+    for(const auto& i : instance.m_distanceMatrix){
+        for(auto j : i){
+            write<< std::setw(11) << j << " ; ";
+        }
+        write << std::endl;
+    }
+}
