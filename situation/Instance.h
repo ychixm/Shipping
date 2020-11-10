@@ -6,7 +6,7 @@
 #include <list>
 #include <iostream>
 #include <fstream>
-#include "Point.h"
+#include "../toolBox/Point.h"
 #include "Shipping.h"
 
 class Instance {
@@ -33,7 +33,7 @@ public:
 
     void showDestinationMatrix();
 
-    void writeTofile(Instance& instance);
+    void writeTofile(Instance& instance, const std::string& fileName);
 
     void writeDestiantionTofile(Instance& instance, std::ofstream& write);
 

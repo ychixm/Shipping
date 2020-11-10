@@ -1,5 +1,6 @@
+#include <climits>
 #include "Instance.h"
-#include "Point.h"
+#include "../toolBox/Point.h"
 
 #define GENERATE_RANDOM_POINT  d(g)
 
@@ -60,8 +61,8 @@ void Instance::generateDistanceMatrix() {
 
     for(const auto& s : m_shippingPoints){
 
-        tmp.emplace_back(distance(m_depot,s.getOrigin()));
-        tmp.emplace_back(distance(m_depot,s.getDestination()));
+        tmp.emplace_back(Point::distance(m_depot,s.getOrigin()));
+        tmp.emplace_back(Point::distance(m_depot,s.getDestination()));
     }
     m_distanceMatrix.emplace_back(tmp);
 
@@ -93,15 +94,15 @@ std::vector<float> Instance::calculateDistance(const Shipping& s,char c){
     }
 
     std::vector<float> tmp;
-    tmp.emplace_back(distance(actualPos,m_depot));
+    tmp.emplace_back(Point::distance(actualPos,m_depot));
 
     for(const auto& destinationPoint: m_shippingPoints){
-        tmp.emplace_back(distance(actualPos,destinationPoint.getOrigin()));
+        tmp.emplace_back(Point::distance(actualPos,destinationPoint.getOrigin()));
         ///if it's the same Shipping and you want to calculate the distance to go from destination to origin you can't.
         if(destinationPoint == s && c =='o'){
             tmp.emplace_back(INT_MAX);
         } else{
-            tmp.emplace_back(distance(actualPos,destinationPoint.getDestination()));
+            tmp.emplace_back(Point::distance(actualPos,destinationPoint.getDestination()));
         }
     }
     return tmp;
@@ -116,17 +117,19 @@ void Instance::showDestinationMatrix() {
     }
 }
 
-void Instance::writeTofile(Instance& instance) {
-    Instance &i =instance;
-    std::ofstream  file {"text.txt"};
-    file<<i<<std::endl;
+void Instance::writeTofile(Instance& instance, const std::string& fileName) {
+    std::ofstream file (fileName);
     writeDestiantionTofile(instance,file);
-
 }
-void Instance::writeDestiantionTofile(Instance &instance, std::ofstream& write) {
+void Instance::writeDestiantionTofile(Instance &instance, std::ofstream& write){
+    write << instance.m_shippingPoints.size() << std::endl;
+    for(const auto& point :instance.m_shippingPoints){
+        write << point.getName() <<';'<< point.getOrigin().getX() << ',' << point.getOrigin().getY()
+        << ";" << point.getDestination().getX() << ',' << point.getDestination().getY() << std::endl;
+    }
     for(const auto& i : instance.m_distanceMatrix){
         for(auto j : i){
-            write<< std::setw(11) << j << " ; ";
+            write << j << ";";
         }
         write << std::endl;
     }

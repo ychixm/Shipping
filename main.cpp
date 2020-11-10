@@ -14,8 +14,7 @@ int main() {
 
     rand.generateDistanceMatrix();
     rand.showDestinationMatrix();
-    rand.writeTofile(rand);
+    rand.writeTofile(rand,"../instances/first.txt");
     std::cout << "time to compute : "<< timer.elapsed_time() << " ms" << std::endl;
-
     return 0;
 }
