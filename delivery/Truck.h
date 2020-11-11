@@ -34,8 +34,6 @@ class Truck {
 
     void setSteps(const std::list<Point> &steps);
 
-    bool isFull();
-
 };
 
 

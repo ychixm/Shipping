@@ -10,8 +10,12 @@ private:
     Point m_destination;
     std::string m_name;
     int m_ID;
-    int m_truckID;
     bool m_delivered;
+    double m_volume;
+    int m_originWaitingMalus;
+    int m_destinationWaitingMalus;
+
+
 public:
 
     Shipping(Point &a, Point &b,std::string &name);
@@ -35,15 +39,23 @@ public:
 
     void setID(int ID);
 
-    int getTruckID() const;
-
-    void setTruckID(int truckID);
-
     bool isDelivered() const;
 
     void delivered();
 
     void notDelivered();
+
+    double getVolume() const;
+
+    void setVolume(double volume);
+
+    int getOriginWaitingMalus() const;
+
+    void setOriginWaitingMalus(int originWaitingMalus);
+
+    int getDestinationWaitingMalus() const;
+
+    void setDestinationWaitingMalus(int DestinationWaitingMalus);
 
     friend std::ostream& operator<<(std::ostream& os,const Shipping& s);
     ///the comparison is only on the name of the shipping.

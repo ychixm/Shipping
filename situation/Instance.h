@@ -13,7 +13,6 @@ class Instance {
     std::vector<std::vector<float> > m_distanceMatrix = std::vector<std::vector<float> >();
     std::vector<Shipping> m_shippingPoints = std::vector<Shipping>();
     Point m_depot = Point(0,0);
-
 public:
     const std::vector<std::vector<float>> &getDistanceMatrix() const;
 

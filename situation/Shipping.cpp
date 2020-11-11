@@ -33,13 +33,6 @@ void Shipping::setID(int ID) {
     m_ID = ID;
 }
 
-int Shipping::getTruckID() const {
-    return m_truckID;
-}
-
-void Shipping::setTruckID(int truckID) {
-    m_truckID = truckID;
-}
 bool Shipping::isDelivered() const {
     return m_delivered;
 }
@@ -52,26 +45,45 @@ void Shipping::notDelivered() {
     m_delivered = false;
 }
 
+double Shipping::getVolume() const {
+    return m_volume;
+}
+
+void Shipping::setVolume(double volume) {
+    m_volume = volume;
+}
+
+int Shipping::getOriginWaitingMalus() const {
+    return m_originWaitingMalus;
+}
+
+void Shipping::setOriginWaitingMalus(int originWaitingMalus) {
+    m_originWaitingMalus = originWaitingMalus;
+}
+
+int Shipping::getDestinationWaitingMalus() const {
+    return m_originWaitingMalus;
+}
+
+void Shipping::setDestinationWaitingMalus(int destinationWaitingMalus) {
+    m_destinationWaitingMalus = destinationWaitingMalus;
+}
 
 Shipping::Shipping(Point &a,Point &b):m_origin(a),m_destination(b){
     m_ID = -1;
     m_delivered = false;
-    m_truckID = -1;
 }
 Shipping::Shipping(Point &a, Point &b, std::string &name):m_origin(a),m_destination(b),m_name(name) {
     m_ID = -1;
     m_delivered = false;
-    m_truckID = -1;
 }
 Shipping::Shipping(Point a, Point b):m_origin(a),m_destination(b){
     m_ID = -1;
     m_delivered = false;
-    m_truckID = -1;
 }
 Shipping::Shipping(Point a, Point b, std::string name):m_origin(a),m_destination(b),m_name(std::move(name)){
     m_ID = -1;
     m_delivered = false;
-    m_truckID = -1;
 }
 
 std::ostream &operator<<(std::ostream &os, const Shipping& s) {

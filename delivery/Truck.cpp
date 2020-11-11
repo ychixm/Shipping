@@ -23,12 +23,3 @@ const std::list<Point> &Truck::getSteps() const {
 void Truck::setSteps(const std::list<Point> &steps) {
     Truck::m_steps = steps;
 }
-
-bool Truck::isFull() {
-    if(m_capacity >=  m_shippingId.size()){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
