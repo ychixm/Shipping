@@ -7,6 +7,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <utility>
 #include "../toolBox/Point.h"
 #include "../situation/Shipping.h"
 
@@ -17,8 +18,7 @@ class Truck {
     int m_ID;
     float m_distance;
     float m_capacity;
-    std::list<int> m_shippingId;
-    std::list<Point> m_steps;
+    std::list<std::pair<Shipping,bool> > m_steps;
 
     //time start
     //time finish
@@ -37,11 +37,11 @@ class Truck {
 
     void setCapacity(float capacity);
 
-    const std::list<Point> &getSteps() const;
+    const std::list<std::pair<Shipping,bool> > &getSteps() const;
 
-    void setSteps(const std::list<Point> &steps);
+    void setSteps(const std::list<std::pair<Shipping,bool> > &steps);
 
-    static std::list<Point> updatedListCopy(std::list<Point> steps, int index, Point ship);
+    static std::list<std::pair<Shipping,bool> > updatedListCopy(const Truck& truck, int index, const Shipping& ship, bool origin);
 };
 
 
