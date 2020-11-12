@@ -4,6 +4,9 @@
 
 #include <vector>
 #include <list>
+#include <iostream>
+#include <iterator>
+#include <algorithm>
 #include "../toolBox/Point.h"
 #include "../situation/Shipping.h"
 
@@ -13,7 +16,7 @@ class Truck {
 
     int m_ID;
     float m_distance;
-    int m_capacity;
+    float m_capacity;
     std::list<int> m_shippingId;
     std::list<Point> m_steps;
 
@@ -30,10 +33,15 @@ class Truck {
 
     void setDistance(float distance);
 
+    float getCapacity() const;
+
+    void setCapacity(float capacity);
+
     const std::list<Point> &getSteps() const;
 
     void setSteps(const std::list<Point> &steps);
 
+    static std::list<Point> updatedListCopy(std::list<Point> steps, int index, Point ship);
 };
 
 
