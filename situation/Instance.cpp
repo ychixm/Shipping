@@ -2,19 +2,33 @@
 #include "Instance.h"
 #include "../toolBox/Point.h"
 
-#define GENERATE_RANDOM_POINT  d(g)
+#define GENERATE_RANDOM_POINT d(g)
 
 Instance::Instance(int &number_of_shipping,int &mapSize) {
-
+    Instance::m_ID = 0;
+    m_shippingPoints.emplace_back(Point(m_depot.getX(),m_depot.getY()),
+                                  Point(m_depot.getX(),m_depot.getY()),
+                                  m_ID,
+                                  "depot",
+                                  0,
+                                  0,
+                                  0
+                                  );
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine g(seed);
     std::uniform_int_distribution<int> d(0,mapSize);
+    std::uniform_int_distribution<int> colis(1,2);
 
     for (int i = 1; i < number_of_shipping+1; i++) {
         m_shippingPoints.emplace_back(Shipping(Point(GENERATE_RANDOM_POINT, GENERATE_RANDOM_POINT),
                                                Point( GENERATE_RANDOM_POINT, GENERATE_RANDOM_POINT),
-                                               std::to_string(i)
+                                               Instance::m_ID,
+                                               std::to_string(i),
+                                               5,
+                                               5,
+                                               colis(g)
         ));
+        Instance::m_ID++;
     }
 }
 const Point &Instance::getDepot() const {
@@ -42,7 +56,6 @@ void Instance::setShippingPoint(const std::vector<Shipping> &ShippingPoint) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Instance& i) {
-    os <<"depot: "<< i.getDepot() << std::endl;
     for(const auto& s : i.getShippingPoint()){
         os << s;
     }
@@ -60,14 +73,14 @@ void Instance::generateDistanceMatrix() {
     tmp.emplace_back(0);
 
     for(const auto& s : m_shippingPoints){
-
+        if(s.getName()=="depot")continue;
         tmp.emplace_back(Point::distance(m_depot,s.getOrigin()));
         tmp.emplace_back(Point::distance(m_depot,s.getDestination()));
     }
     m_distanceMatrix.emplace_back(tmp);
 
     for(const auto& s : m_shippingPoints){
-
+        if (s.getName()=="depot")continue;
         m_distanceMatrix.emplace_back(calculateDistance(s,'o'));
         m_distanceMatrix.emplace_back(calculateDistance(s,'d'));
     }
@@ -97,6 +110,7 @@ std::vector<float> Instance::calculateDistance(const Shipping& s,char c){
     tmp.emplace_back(Point::distance(actualPos,m_depot));
 
     for(const auto& destinationPoint: m_shippingPoints){
+        if (destinationPoint.getName()=="depot")continue;
         tmp.emplace_back(Point::distance(actualPos,destinationPoint.getOrigin()));
         ///if it's the same Shipping and you want to calculate the distance to go from destination to origin you can't.
         if(destinationPoint == s && c =='o'){

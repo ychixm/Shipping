@@ -6,22 +6,22 @@
 class Shipping {
     //TODO : add m^3
 private:
+
     Point m_origin;
     Point m_destination;
     std::string m_name;
     int m_ID;
-    bool m_delivered;
+    bool m_delivered = false;
     double m_volume;
     int m_originWaitingMalus;
     int m_destinationWaitingMalus;
 
 
 public:
-
-    Shipping(Point &a, Point &b,std::string &name);
-    Shipping(Point &a, Point &b);
-    Shipping(Point a, Point b,std::string name);
-    Shipping(Point a, Point b);
+    Shipping(Point a, Point b, int ID, std::string name);
+    Shipping(Point &a, Point &b,int ID,std::string &name);
+    Shipping(Point &a, Point &b,int ID,std::string &name, int originWaitingMalus, int destinationWaitingMalus, int volume);
+    Shipping(Point a, Point b,int ID,std::string name,int originWaitingMalus, int destinationWaitingMalus, int volume);
 
     const Point &getOrigin() const;
 

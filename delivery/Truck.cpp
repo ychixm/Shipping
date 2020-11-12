@@ -35,8 +35,9 @@ void Truck::setCapacity(float capacity) {
 std::list<std::pair<Shipping, bool> > Truck::updatedListCopy(const Truck& truck, int index, const Shipping& ship, bool origin) {
     std::list<std::pair<Shipping, bool> > tmp;
     std::list<std::pair<Shipping, bool> > steps = truck.getSteps();
-    std::copy(steps.begin(), steps.end(), std::back_inserter(steps));
-    auto it = steps.begin();
+    std::copy(steps.begin(), steps.end(), std::back_inserter(tmp));
+    auto it = tmp.begin();
     std::advance(it, index);
     tmp.insert(it,1,std::pair<Shipping, bool>(ship,origin));
+    return tmp;
 }

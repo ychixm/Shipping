@@ -10,10 +10,14 @@
 #include "Shipping.h"
 
 class Instance {
+private:
     std::vector<std::vector<float> > m_distanceMatrix = std::vector<std::vector<float> >();
     std::vector<Shipping> m_shippingPoints = std::vector<Shipping>();
     Point m_depot = Point(0,0);
+
 public:
+    int m_ID;
+
     const std::vector<std::vector<float>> &getDistanceMatrix() const;
 
     void setDistanceMatrix(const std::vector<std::vector<float>> &DistanceMatrix);

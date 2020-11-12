@@ -17,7 +17,7 @@ class Truck {
 
     int m_ID;
     float m_distance;
-    float m_capacity;
+    float m_capacity = 10;
     std::list<std::pair<Shipping,bool> > m_steps;
 
     //time start

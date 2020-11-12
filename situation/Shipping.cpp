@@ -69,25 +69,13 @@ void Shipping::setDestinationWaitingMalus(int destinationWaitingMalus) {
     m_destinationWaitingMalus = destinationWaitingMalus;
 }
 
-Shipping::Shipping(Point &a,Point &b):m_origin(a),m_destination(b){
-    m_ID = -1;
-    m_delivered = false;
-}
-Shipping::Shipping(Point &a, Point &b, std::string &name):m_origin(a),m_destination(b),m_name(name) {
-    m_ID = -1;
-    m_delivered = false;
-}
-Shipping::Shipping(Point a, Point b):m_origin(a),m_destination(b){
-    m_ID = -1;
-    m_delivered = false;
-}
-Shipping::Shipping(Point a, Point b, std::string name):m_origin(a),m_destination(b),m_name(std::move(name)){
-    m_ID = -1;
-    m_delivered = false;
-}
+Shipping::Shipping(Point &a, Point &b, int ID, std::string &name):m_origin(a),m_destination(b),m_ID(ID),m_name(name){}
+Shipping::Shipping(Point &a, Point &b, int ID, std::string &name, int originWaitingMalus, int destinationWaitingMalus,int volume):m_origin(a),m_destination(b),m_ID(ID),m_name(name),m_originWaitingMalus(originWaitingMalus),m_destinationWaitingMalus(destinationWaitingMalus),m_volume(volume){}
+Shipping::Shipping(Point a, Point b,int ID,std::string name):m_origin(a),m_destination(b),m_ID(ID),m_name(std::move(name)){}
+Shipping::Shipping(Point a, Point b, int ID, std::string name, int originWaitingMalus, int destinationWaitingMalus, int volume):m_origin(a),m_destination(b),m_ID(ID),m_name(std::move(name)),m_originWaitingMalus(originWaitingMalus),m_destinationWaitingMalus(destinationWaitingMalus),m_volume(volume){}
 
 std::ostream &operator<<(std::ostream &os, const Shipping& s) {
-    os << s.getName() << ", origin: "<< s.getOrigin() <<", destination: "<< s.getDestination() << std::endl;
+    os << s.getName() <<", ID: "<< s.getID() << ", origin: "<< s.getOrigin() <<", malus: "<<s.getOriginWaitingMalus()<<", destination: "<< s.getDestination()<<", malus: "<<s.getDestinationWaitingMalus() << std::endl;
     return os;
 }
 
