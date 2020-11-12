@@ -62,7 +62,7 @@ void Shipping::setOriginWaitingMalus(int originWaitingMalus) {
 }
 
 int Shipping::getDestinationWaitingMalus() const {
-    return m_originWaitingMalus;
+    return m_destinationWaitingMalus;
 }
 
 void Shipping::setDestinationWaitingMalus(int destinationWaitingMalus) {

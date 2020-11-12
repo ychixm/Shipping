@@ -41,3 +41,30 @@ std::list<std::pair<Shipping, bool> > Truck::updatedListCopy(const Truck& truck,
     tmp.insert(it,1,std::pair<Shipping, bool>(ship,origin));
     return tmp;
 }
+
+int Truck::findLowestValue(std::vector<double> tab) {
+    int value = INT_MAX;
+    int index = 0;
+    for(int i; i < tab.size(); i++){
+        if(tab[i] < value){
+            value = tab[i],
+            index = i;
+        }
+    }
+    return index;
+}
+
+double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::pair<Shipping, bool>& b) {
+    if (a.second && b.second){
+        return Point::distance(a.first.getOrigin(),b.first.getOrigin()) + a.first.getOriginWaitingMalus();
+    }
+    else if (a.second && !b.second){
+        return Point::distance(a.first.getOrigin(),b.first.getDestination())+ a.first.getOriginWaitingMalus();
+    }
+    else if (!a.second && b.second){
+        return Point::distance(a.first.getDestination(),b.first.getOrigin())+ a.first.getDestinationWaitingMalus();
+    }
+    else if (!a.second && !b.second){
+        return Point::distance(a.first.getDestination(),b.first.getDestination())+ a.first.getDestinationWaitingMalus();
+    }
+}

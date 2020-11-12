@@ -42,6 +42,10 @@ class Truck {
     void setSteps(const std::list<std::pair<Shipping,bool> > &steps);
 
     static std::list<std::pair<Shipping,bool> > updatedListCopy(const Truck& truck, int index, const Shipping& ship, bool origin);
+
+    static int findLowestValue(std::vector<double> tab);
+
+    static double distanceWithMalus(const std::pair<Shipping,bool>& a, const std::pair<Shipping,bool>& b);
 };
 
 
