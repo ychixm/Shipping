@@ -4,26 +4,26 @@
 
 #include <vector>
 #include <list>
-#include <iostream>
-#include <iterator>
-#include <algorithm>
-#include <utility>
+#include<utility>
+#include<iterator>
+#include<algorithm>
 #include "../toolBox/Point.h"
 #include "../situation/Shipping.h"
 
 class Truck {
 
-    private:
+private:
 
     int m_ID;
     float m_distance;
-    float m_capacity = 10;
+    float m_capacity;
     std::list<std::pair<Shipping,bool> > m_steps;
+    const int INITIAL_CAPACITY = 10;
 
     //time start
     //time finish
 
-    public:
+public:
 
     int getID() const;
 
@@ -41,11 +41,18 @@ class Truck {
 
     void setSteps(const std::list<std::pair<Shipping,bool> > &steps);
 
-    static std::list<std::pair<Shipping,bool> > updatedListCopy(const Truck& truck, int index, const Shipping& ship, bool origin);
+    bool optimize_distance(Shipping shipping);
 
     static int findLowestValue(std::vector<double> tab);
 
+    Truck(Shipping shipping, float distance);
+
+    int findBestSpot(Shipping shipping, int start , bool origin);
+
+    static std::list<std::pair<Shipping, bool> > updatedListCopy(const Truck& truck, int index, const Shipping& ship, bool origin);
+
     static double distanceWithMalus(const std::pair<Shipping,bool>& a, const std::pair<Shipping,bool>& b);
+
 };
 
 

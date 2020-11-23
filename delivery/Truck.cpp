@@ -1,4 +1,10 @@
 #include "Truck.h"
+#include <climits>
+
+Truck::Truck(Shipping shipping, float distance):m_distance(distance){
+    m_steps.insert(m_steps.begin(),1,std::pair<Shipping,bool>(shipping,false));
+    m_steps.insert(m_steps.begin(),1,std::pair<Shipping,bool>(shipping,true));
+}
 
 int Truck::getID() const {
     return m_ID;
@@ -32,6 +38,9 @@ void Truck::setCapacity(float capacity) {
     m_capacity = capacity;
 }
 
+
+// this function return a copy of the truck route and insert a point in this copy at the desired index
+
 std::list<std::pair<Shipping, bool> > Truck::updatedListCopy(const Truck& truck, int index, const Shipping& ship, bool origin) {
     std::list<std::pair<Shipping, bool> > tmp;
     std::list<std::pair<Shipping, bool> > steps = truck.getSteps();
@@ -42,15 +51,90 @@ std::list<std::pair<Shipping, bool> > Truck::updatedListCopy(const Truck& truck,
     return tmp;
 }
 
+
+//this function return if a truck can accepts a shipping and if it's the case, it adds the shipping on the truck route
+
+bool Truck::optimize_distance(Shipping shipping){
+    auto it = m_steps.begin();
+    std::cout<<""<<std::endl;
+    std::cout<<""<<std::endl;
+    std::cout<<"entree de l'origine"<<std::endl;
+    std::cout<<""<<std::endl;
+    int index_origin =(findBestSpot(shipping,1,true));
+    std::cout<<"index_origine :"<<index_origin<<std::endl;
+    if (index_origin > 0) {
+        std::advance(it,index_origin);
+        m_steps.insert(it,1,std::pair<Shipping, bool>(shipping,true));
+    }
+    else{
+        return false;
+    }
+    std::cout<<"entree de destination"<<std::endl;
+    auto it_dest = m_steps.begin();
+    std::cout<<""<<std::endl;
+    int index_destination =(findBestSpot(shipping,index_origin+1,false));
+    std::cout<<"index_destination :"<<index_destination<<std::endl;
+    if (index_destination > 0){
+        std::advance(it_dest,index_destination);
+        m_steps.insert(it,1,std::pair<Shipping, bool>(shipping,false));
+        return(true);
+    }
+    else{
+        return false;
+    }
+}
+
+
+
+//this function takes a shipping point(origin if origin==true, destination...) and the first index where we can insert it
+//she return the best spot of to insert the point
+
+int Truck::findBestSpot(Shipping shipping, int start , bool origin){
+    std::vector<double> distance_list(start,INT_MAX);
+    for(int index = start ; index < m_steps.size() ; index++){
+        std::list<std::pair<Shipping,bool>> tableau_copie = Truck::updatedListCopy(*this,index,shipping,origin);
+        auto it_distance = tableau_copie.begin();
+        double distance_totale = 0;
+        m_capacity = INITIAL_CAPACITY;
+        for(it_distance = tableau_copie.begin(); it_distance != tableau_copie.end() ; it_distance ++){
+            /*if (it_distance->second) {//if it is an origin we withdraw the volume of the shipping to the truck
+                Truck::setCapacity(Truck::getCapacity - it_distance->first.getVolume());
+                std::cout<<"origin"<<std::endl;
+            }*/
+            if (it_distance->second) {//if it is an origin we withdraw the volume of the shipping to the truck
+                m_capacity -= (it_distance)->first.getVolume();
+                std::cout<<"origin"<<std::endl;
+            }
+            else{//if it is an destination we add the volume of the shipping to the truck
+                std::cout<<"destination"<<std::endl;
+                m_capacity += it_distance->first.getVolume();
+            }
+            if(m_capacity >= 0){
+                distance_totale += Truck::distanceWithMalus(*it_distance,*std::next(it_distance,1));
+            }
+            else{
+                distance_totale = INT_MAX;
+            }
+        }
+        std::cout<<"passage n°"<<index-start<<" distance totale :"<< distance_totale<<std::endl;
+        distance_list.push_back(distance_totale);
+        //we currently have an array: distance_list containing the distance for each index between the two depots in the truck route
+        //now we find the index of the minimum total distance
+    }
+    return findLowestValue(distance_list);
+}
+
 int Truck::findLowestValue(std::vector<double> tab) {
     int value = INT_MAX;
     int index = 0;
-    for(int i; i < tab.size(); i++){
+    for(int i ; i < tab.size(); i++){
+        std::cout<<tab[i]<<std::endl;
         if(tab[i] < value){
-            value = tab[i],
+            value = tab[i];
             index = i;
         }
     }
+    std::cout<<"findlowestValue : "<<tab.size()<<std::endl;
     return index;
 }
 
