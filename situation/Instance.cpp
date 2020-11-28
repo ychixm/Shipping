@@ -13,7 +13,7 @@ Instance::Instance(int &number_of_shipping,int &mapSize) {
                                   0,
                                   0,
                                   0
-                                  );
+    );
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine g(seed);
     std::uniform_int_distribution<int> d(0,mapSize);
@@ -139,7 +139,7 @@ void Instance::writeDestiantionTofile(Instance &instance, std::ofstream& write){
     write << instance.m_shippingPoints.size() << std::endl;
     for(const auto& point :instance.m_shippingPoints){
         write << point.getName() <<';'<< point.getOrigin().getX() << ',' << point.getOrigin().getY()
-        << ";" << point.getDestination().getX() << ',' << point.getDestination().getY() << std::endl;
+              << ";" << point.getDestination().getX() << ',' << point.getDestination().getY() << std::endl;
     }
     for(const auto& i : instance.m_distanceMatrix){
         for(auto j : i){

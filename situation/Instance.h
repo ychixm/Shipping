@@ -38,7 +38,7 @@ public:
 
     void writeTofile(Instance& instance, const std::string& fileName);
 
-    void writeDestiantionTofile(Instance& instance, std::ofstream& write);
+     void writeDestiantionTofile(Instance& instance, std::ofstream& write);
 
 public:
     Instance(int &number_of_shipping,int &mapSize);

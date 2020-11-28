@@ -62,7 +62,7 @@ void Shipping::setOriginWaitingMalus(int originWaitingMalus) {
 }
 
 int Shipping::getDestinationWaitingMalus() const {
-    return m_destinationWaitingMalus;
+    return m_originWaitingMalus;
 }
 
 void Shipping::setDestinationWaitingMalus(int destinationWaitingMalus) {
@@ -75,7 +75,7 @@ Shipping::Shipping(Point a, Point b,int ID,std::string name):m_origin(a),m_desti
 Shipping::Shipping(Point a, Point b, int ID, std::string name, int originWaitingMalus, int destinationWaitingMalus, int volume):m_origin(a),m_destination(b),m_ID(ID),m_name(std::move(name)),m_originWaitingMalus(originWaitingMalus),m_destinationWaitingMalus(destinationWaitingMalus),m_volume(volume){}
 
 std::ostream &operator<<(std::ostream &os, const Shipping& s) {
-    os << s.getName() <<", ID: "<< s.getID() << ", origin: "<< s.getOrigin() <<", malus: "<<s.getOriginWaitingMalus()<<", destination: "<< s.getDestination()<<", malus: "<<s.getDestinationWaitingMalus() << std::endl;
+    os << s.getName() <<", ID: "<< s.getID() << ", origin: "<< s.getOrigin() <<", malus: "<<s.getOriginWaitingMalus()<<", destination: "<< s.getDestination()<<", malus: "<<s.getDestinationWaitingMalus() <<", volume: " << s.getVolume() << std::endl;
     return os;
 }
 

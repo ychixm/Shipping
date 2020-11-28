@@ -13,7 +13,7 @@ private:
     int m_x;
     int m_y;
 
-    public:
+public:
 
     Point(int a, int b);
     Point();
