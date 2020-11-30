@@ -1,4 +1,5 @@
 #include "Truck.h"
+#include "../situation/Instance.h"
 #include <climits>
 
 Truck::Truck(Shipping shipping, float distance):m_distance(distance){
@@ -169,15 +170,54 @@ std::pair<int,double> Truck::findLowestDistance_andValue(std::vector<double> tab
 
 double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::pair<Shipping, bool>& b) {
     if (a.second && b.second){
-        return Point::distance(a.first.getOrigin(),b.first.getOrigin()) + a.first.getOriginWaitingMalus();
+        int A = (a.first.getID()*2)+1;
+        int B = (b.first.getID()*2)+1;
+        if(a.first.getName() == "depot"){
+            A = 0;
+        }
+        if(b.first.getName() == "depot"){
+            B = 0;
+        }
+        return Instance::accessMatrix().at(A).at(B) + double(a.first.getOriginWaitingMalus());
+        //return Point::distance(a.first.getOrigin(),b.first.getOrigin()) + a.first.getOriginWaitingMalus();
     }
     else if (a.second && !b.second){
-        return Point::distance(a.first.getOrigin(),b.first.getDestination())+ a.first.getOriginWaitingMalus();
+        int A = (a.first.getID()*2)+1;
+        int B = (b.first.getID()*2)+2;
+        if(a.first.getName() == "depot"){
+            A = 0;
+        }
+        if(b.first.getName() == "depot"){
+            B = 0;
+        }
+        return Instance::accessMatrix().at(A).at(B) + double(a.first.getOriginWaitingMalus());
+
+        //return Point::distance(a.first.getOrigin(),b.first.getDestination())+ a.first.getOriginWaitingMalus();
     }
     else if (!a.second && b.second){
-        return Point::distance(a.first.getDestination(),b.first.getOrigin())+ a.first.getDestinationWaitingMalus();
+        int A = (a.first.getID()*2)+2;
+        int B = (b.first.getID()*2)+1;
+        if(a.first.getName() == "depot"){
+            A = 0;
+        }
+        if(b.first.getName() == "depot"){
+            B = 0;
+        }
+        return Instance::accessMatrix().at(A).at(B) + double(a.first.getDestinationWaitingMalus());
+
+        //return Point::distance(a.first.getDestination(),b.first.getOrigin())+ a.first.getDestinationWaitingMalus();
     }
     else if (!a.second && !b.second){
-        return Point::distance(a.first.getDestination(),b.first.getDestination())+ a.first.getDestinationWaitingMalus();
+        int A = (a.first.getID()*2)+2;
+        int B = (b.first.getID()*2)+2;
+        if(a.first.getName() == "depot"){
+            A = 0;
+        }
+        if(b.first.getName() == "depot"){
+            B = 0;
+        }
+        return Instance::accessMatrix().at(A).at(B)+ double(a.first.getDestinationWaitingMalus());
+
+        //return Point::distance(a.first.getDestination(),b.first.getDestination())+ a.first.getDestinationWaitingMalus();
     }
 }

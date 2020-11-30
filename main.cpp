@@ -17,6 +17,8 @@ int main() {
 
     inst.generateDistanceMatrix();
     inst.showDestinationMatrix();
+
+    Instance::Matrix = inst.getDistanceMatrix();
     std::cout << "time to compute : "<< timer.elapsed_time() << " ms" << std::endl;
 
     Warehouse warehouse(inst.getShippingPoint(),3);
