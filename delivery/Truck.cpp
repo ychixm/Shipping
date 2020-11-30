@@ -221,3 +221,19 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         //return Point::distance(a.first.getDestination(),b.first.getDestination())+ a.first.getDestinationWaitingMalus();
     }
 }
+
+void Truck::exportSteps(){
+    std::ofstream file;
+    file.open("../instances/data.txt",std::ios::app);
+    file << "truck:" << m_ID << ":";
+    for(const auto& e : m_steps){
+        if(e.second){
+            file << e.first.getName()+" o" + "," << e.first.getOrigin().getX() << "," << e.first.getOrigin().getY() << ":";
+        }
+        else{
+            file << e.first.getName()+" d" + "," << e.first.getDestination().getX() << "," << e.first.getDestination().getY() << ":";
+        }
+    }
+    file << "\n" ;
+    file.close();
+}

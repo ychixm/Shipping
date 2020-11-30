@@ -54,6 +54,8 @@ public:
 
     static double distanceWithMalus(const std::pair<Shipping,bool>& a, const std::pair<Shipping,bool>& b);
 
+    void exportSteps();
+
 };
 
 
