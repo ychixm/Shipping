@@ -1,3 +1,4 @@
+#include <climits>
 #include "Warehouse.h"
 
 Warehouse::Warehouse(std::vector<Shipping> shipPoints,int trucks_number)

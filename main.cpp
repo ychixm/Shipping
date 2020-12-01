@@ -6,19 +6,18 @@
 #include"delivery/Warehouse.h"
 //TODO : add Vehicles
 
+
 int main() {
     stopwatch<> timer;
 
     int numberOfShipping = 10;
     int mapSize = 100;
     Instance inst(numberOfShipping,mapSize);
-
     std::cout << inst << std::endl;
 
     inst.generateDistanceMatrix();
     inst.showDestinationMatrix();
-
-    Instance::Matrix = inst.getDistanceMatrix();
+    Truck::Matrix = inst.getDistanceMatrix();
     std::cout << "time to compute : "<< timer.elapsed_time() << " ms" << std::endl;
 
     Warehouse warehouse(inst.getShippingPoint(),3);

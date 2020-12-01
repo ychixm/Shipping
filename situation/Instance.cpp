@@ -148,7 +148,3 @@ void Instance::writeDestiantionTofile(Instance &instance, std::ofstream& write){
         write << std::endl;
     }
 }
-
-std::vector<std::vector<float> > Instance::accessMatrix() {
-    return Matrix;
-}

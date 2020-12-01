@@ -7,11 +7,12 @@
 #include<utility>
 #include<iterator>
 #include<algorithm>
+#include <string>
+#include <fstream>
 #include "../toolBox/Point.h"
 #include "../situation/Shipping.h"
 
 class Truck {
-
 private:
 
     int m_ID;
@@ -19,8 +20,8 @@ private:
     float m_capacity;
     std::list<std::pair<Shipping,bool> > m_steps;
     const int INITIAL_CAPACITY = 10;
-
 public:
+    static std::vector<std::vector<float> > Matrix;
 
     int getID() const;
 
@@ -55,8 +56,6 @@ public:
     static double distanceWithMalus(const std::pair<Shipping,bool>& a, const std::pair<Shipping,bool>& b);
 
     void exportSteps();
-
 };
-
 
 #endif //SHIPPING_SERVICE_TRUCK_H
