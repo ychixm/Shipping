@@ -14,6 +14,7 @@ class Warehouse
         void optimizeInsertion();
         bool test_optimizeDistance(const Shipping& shipping);
         int findLowestValue(std::vector<double> tab);
+        int smartInsert(int size_of_delivery);
 
     protected:
 

@@ -17,10 +17,11 @@ Warehouse::Warehouse(std::vector<Shipping> shipPoints,int trucks_number)
 void Warehouse::optimizeInsertion(){
 
     while(!m_deliveryToPlace.empty()){
-        int index = rand()%m_deliveryToPlace.size();//random choice of the shipping we are going to insert
+        //2int index = rand()%m_deliveryToPlace.size();//random choice of the shipping we are going to insert
+        int index = smartInsert(m_deliveryToPlace.size());
         std::cout<<""<<std::endl;
         std::cout<<""<<std::endl;
-        std::cout<<"colis n°"<<m_deliveryToPlace.at(index).getID()<<std::endl;
+        std::cout<<"colis nï¿½"<<m_deliveryToPlace.at(index).getID()<<std::endl;
 
         std::cout<< test_optimizeDistance(m_deliveryToPlace.at(index))<<": truck ok?(1=true/0=false)" <<std::endl;
         // we remove the shipping that we have just inserted in a truck from the list of shipping to insert (m_deliveryToPlace)
@@ -73,4 +74,13 @@ int Warehouse::findLowestValue(std::vector<double> tab) {
     m_businessDistance = value;
     std::cout<< "m_businessDistance: " << m_businessDistance <<std::endl;
     return (index-4);
+}
+
+int Warehouse::smartInsert(int size_of_delivery) {
+    int value=0;
+    if(size_of_delivery>2)
+    value= size_of_delivery/2;
+    else
+        value = size_of_delivery-1;
+    return value;
 }
