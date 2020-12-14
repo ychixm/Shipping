@@ -2,10 +2,19 @@
 #include "situation/Instance.h"
 #include "toolBox/StopWatch.h"
 #include "delivery/Truck.h"
-#include<random>
+#include <random>
+#include <thread>
+#include <mutex>
 #include"delivery/Warehouse.h"
 //TODO : add Vehicles
 
+std::mutex mtx;
+
+double calculate(const std::vector<Shipping>& shipPoints,unsigned seed, Warehouse* it){
+    Warehouse warehouse(shipPoints,3, std::default_random_engine(seed));
+    warehouse.switchInsertion();
+    *it = std::move(warehouse);
+}
 
 int main() {
     stopwatch<> timer;
@@ -20,22 +29,39 @@ int main() {
     Truck::Matrix = inst.getDistanceMatrix();
     std::cout << "time to compute : "<< timer.elapsed_time() << " ms" << std::endl;
 
-    Warehouse warehouse(inst.getShippingPoint(),3);
-    warehouse.optimizeInsertion();
-    /*Truck truck(inst.getShippingPoint().at(0),4000);
-    std::vector<Shipping> m_deliveryToPlace = std::vector<Shipping>();
-    std::vector<Shipping> shipPoints = inst.getShippingPoint();
-    std::copy(++shipPoints.begin(),shipPoints.end(),std::back_inserter(m_deliveryToPlace));
-    //we copy the list of shipping in order to remove a shipping after inserting it in a truck
-    while(!m_deliveryToPlace.empty()){
-        int index = rand()%m_deliveryToPlace.size();
-        std::cout<<""<<std::endl;
-        std::cout<<""<<std::endl;
-        std::cout<<"colis n°"<<m_deliveryToPlace.at(index).getID()<<std::endl;
-        std::cout<< truck.optimize_distance(m_deliveryToPlace.at(index))<<": truck ok?(1=true/0=false)" <<std::endl;
-        auto it = m_deliveryToPlace.begin();
-        std::advance(it, index);
-        m_deliveryToPlace.erase(it);
-    }*/
+    Warehouse warehouse(inst.getShippingPoint(),3, std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
+    warehouse.switchInsertion();
+
+    //std::thread one(calculate,inst.getShippingPoint(),0);
+
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::seed_seq seq{seed};
+    std::vector<std::uint32_t> seeds(20);
+    seq.generate(seeds.begin(), seeds.end());
+
+    std::default_random_engine randomEngine(seeds.at(0));
+    std::uniform_int_distribution<int> distribution(0,mapSize);
+    distribution(randomEngine);
+
+
+    std::vector<std::thread> threads;
+    std::list<Warehouse*> result = std::list<Warehouse*>();
+    auto it = result.begin();
+    for(int i =  0; i < 20; i++) {
+        std::thread tmp(calculate, inst.getShippingPoint(), seeds.at(i),*it);
+        threads.emplace_back(std::move(tmp));
+        std::cout << std::endl << "start " << i << std::endl;
+        it++;
+    }
+
+    for(int i = 0 ; i < 20 ; i++){
+        threads.at(i).join();
+    }
+
+
+    for(auto resPointer : result){
+        std::cout << *resPointer << ", ";
+    }
+
     return 0;
 }

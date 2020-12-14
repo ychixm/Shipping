@@ -1,13 +1,13 @@
 #include "Truck.h"
-#include "../situation/Instance.h"
 #include <climits>
 
 std::vector<std::vector<float> > Truck::Matrix = std::vector<std::vector<float> >();
 
-Truck::Truck(Shipping shipping, float distance):m_distance(distance){
+Truck::Truck(Shipping shipping,int id){
     m_steps.insert(m_steps.begin(),1,std::pair<Shipping,bool>(shipping,false));
     m_steps.insert(m_steps.begin(),1,std::pair<Shipping,bool>(shipping,true));
     m_distance = 0;
+    m_ID = id;
 }
 
 int Truck::getID() const {
@@ -42,6 +42,7 @@ void Truck::setCapacity(float capacity) {
     m_capacity = capacity;
 }
 
+std::default_random_engine Truck::randomEngine;
 
 // this function return a copy of the truck route and insert a point in this copy at the desired index
 
@@ -51,32 +52,26 @@ std::list<std::pair<Shipping, bool> > Truck::updatedListCopy(std::list<std::pair
     auto it = tmp.begin();
     std::advance(it, index);
     tmp.insert(it,1,std::pair<Shipping, bool>(ship,origin));
-    std::cout<<"taille liste: "<<tmp.size()<<std::endl;
     return tmp;
 }
 
 
 //this function return if a truck can accepts a shipping and if it's the case, it adds the shipping on the truck route
 
-std::tuple<int,int,double> Truck::optimize_distance(Shipping shipping){
+std::tuple<int,int,double> Truck::optimize_distance(Shipping shipping,std::default_random_engine randomEngine){
 
-    std::cout<<"entree de l'origine"<<std::endl;
-    std::cout<<""<<std::endl;
-    std::pair<int,double> best_origin = findBestSpot(shipping,1,true);
+    std::pair<int,double> best_origin = findBestSpot(shipping,1,true,randomEngine);
     int index_origin = best_origin.first;
-    std::cout<<"index_origine :"<<index_origin<<std::endl;
 
-    std::cout<<""<<std::endl;
-    std::cout<<"entree de destination"<<std::endl;
-    std::pair<int,double> best_destination = findBestSpot(shipping,index_origin+1,false);
+    std::pair<int,double> best_destination = findBestSpot(shipping,index_origin+1,false,randomEngine);
     int index_destination = best_destination.first;
     double distance_totale = best_destination.second;
-    std::cout<<"index_destination :"<<index_destination<<std::endl;
 
     std::tuple<int,int,double> oriDestDist(index_origin,index_destination,distance_totale);
     return oriDestDist;
 }
 
+//cette fonction permet d'ajouter un colis dans ce camion
 bool Truck::insertInTruck(Shipping shipping,double origin,double destination,double distance){
     auto it = m_steps.begin();
     int index_origin = (int)origin;
@@ -90,15 +85,18 @@ bool Truck::insertInTruck(Shipping shipping,double origin,double destination,dou
 
     auto it_dest = m_steps.begin();
     int index_destination = (int)destination;
+
     if (index_destination > 0){
         std::advance(it_dest,index_destination);
         m_steps.insert(it,1,std::pair<Shipping, bool>(shipping,false));
+        m_distance = distance;
+        std::cout<<"m_distance (truck) :"<<m_distance<<std::endl;
         return(true);
     }
     else{
         return false;
     }
-    m_distance = distance;
+
 
 }
 
@@ -107,7 +105,7 @@ bool Truck::insertInTruck(Shipping shipping,double origin,double destination,dou
 //this function takes a shipping point(origin if origin==true, destination...) and the first index where we can insert it
 //she return the best spot of to insert the point
 
-std::pair<int,double> Truck::findBestSpot(Shipping shipping, int start , bool origin){
+std::pair<int,double> Truck::findBestSpot(Shipping shipping, int start , bool origin,std::default_random_engine randomEngine){
     std::vector<double> distance_list(start,INT_MAX);
     std::list<std::pair<Shipping,bool>> tableau_origin = m_steps;//ce tableau permet d'adapter le for qui suit selon si on a une origine ou une destination à inserer
     if(!origin){
@@ -136,12 +134,11 @@ std::pair<int,double> Truck::findBestSpot(Shipping shipping, int start , bool or
                 distance_totale = INT_MAX;
             }
         }
-        std::cout<<"passage n°"<<index-start<<" distance totale :"<< distance_totale<<std::endl;
         distance_list.push_back(distance_totale);
         //we currently have an array: distance_list containing the distance for each index between the two depots in the truck route
         //now we find the index of the minimum total distance
     }
-    return findLowestDistance_andValue(distance_list);
+    return randomLowestValue(distance_list,randomEngine);
 }
 
 /*int Truck::findLowestValue(std::vector<double> tab) {
@@ -167,7 +164,54 @@ std::pair<int,double> Truck::findLowestDistance_andValue(std::vector<double> tab
             index = i;
         }
     }
-    return {index,value};
+    return std::pair<int,double>(index,value);
+}
+
+std::pair<int,double>Truck::randomLowestValue(std::vector<double> tab,std::default_random_engine randomEngine){
+    std::vector<std::pair<int,double>> lowestValues;
+    for(int i = 0; i < tab.size(); i++){
+        if(tab[i] < INT_MAX){
+            lowestValues.push_back(std::pair<int,double>(i,tab[i]));
+            //si la distance est éligible alors on l'ajoute au tableau
+        }
+    }
+    //on trie le tableau lowestValues par ordre croissant de distance
+
+    std::sort(lowestValues.begin(), lowestValues.end(), [] (const std::pair<int,double> &pair1, const std::pair<int,double> &pair2) {
+        return pair1.second < pair2.second;
+    });
+    //la boucle for qui suit permet de vérifier que le tri a réussi
+    /*for (const auto &pair : lowestValues) {
+        std::cout <<"pouuuuuuu" << pair.first << " = " << pair.second << std::endl;
+    }*/
+    //on tire parmi les 4 meilleurs résultats si il existe
+    int choice;
+    if(lowestValues.size()>3){
+        std::uniform_int_distribution<int> distribution(0,3);
+        return lowestValues[distribution(randomEngine)];
+    }
+    else{
+        std::uniform_int_distribution<int> distribution(0,lowestValues.size()-1);
+        return lowestValues[distribution(randomEngine)];
+    }
+
+}
+
+Point Truck::getBarycentre(){
+    Point Barycentre;
+    double X = 0;
+    double Y = 0;
+    for(auto it_shipping = ++m_steps.begin(); it_shipping != --m_steps.end(); it_shipping ++){//on ne veut compter qu'une fois le dépot (déjà fait dans l'initialisation)
+        if(it_shipping->second){
+            X = (it_shipping)->first.getOrigin().getX();
+            Y = it_shipping->first.getOrigin().getY();
+        }
+        else{
+            X = it_shipping->first.getDestination().getX();
+            Y = it_shipping->first.getDestination().getY();
+        }
+    }
+    return Point(int(X/(m_steps.size()-1)),int(Y/(m_steps.size()-1)));
 }
 
 double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::pair<Shipping, bool>& b) {
@@ -226,7 +270,7 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
 
 void Truck::exportSteps(){
     std::ofstream file;
-    file.open("../instances/data.txt",std::ios::app);
+    file.open("C:/Users/nicol/Documents/4ème année/projetCplus_plus/data.txt",std::ios::app);
     file << "truck:" << m_ID << ":";
     for(const auto& e : m_steps){
         if(e.second){
