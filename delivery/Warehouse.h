@@ -1,6 +1,8 @@
 #ifndef WAREHOUSE_H
 #define WAREHOUSE_H
 #include <iostream>
+#include <climits>
+#include <experimental/filesystem>
 #include "Truck.h"
 #include "../situation/Shipping.h"
 
@@ -21,6 +23,7 @@ public:
     double getBusinessDistance() const;
     friend std::ostream& operator<<(std::ostream& os,Warehouse w);
     Warehouse();
+    void exportPath(unsigned seed);
 
 
 private:

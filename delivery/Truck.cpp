@@ -1,6 +1,7 @@
 #include "Truck.h"
 #include <climits>
 
+std::mutex Truckmtx;
 std::vector<std::vector<float> > Truck::Matrix = std::vector<std::vector<float> >();
 
 Truck::Truck(Shipping shipping,int id){
@@ -90,7 +91,6 @@ bool Truck::insertInTruck(Shipping shipping,double origin,double destination,dou
         std::advance(it_dest,index_destination);
         m_steps.insert(it,1,std::pair<Shipping, bool>(shipping,false));
         m_distance = distance;
-        std::cout<<"m_distance (truck) :"<<m_distance<<std::endl;
         return(true);
     }
     else{
@@ -158,7 +158,6 @@ std::pair<int,double> Truck::findLowestDistance_andValue(std::vector<double> tab
     int value = INT_MAX;
     int index = 0;
     for(int i = 0; i < tab.size(); i++){
-        std::cout<<tab[i]<<std::endl;
         if(tab[i] < value){
             value = tab[i];
             index = i;
@@ -224,7 +223,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        return Truck::Matrix.at(B).at(A) + double(a.first.getOriginWaitingMalus());
+        Truckmtx.lock();
+        double tmp = Truck::Matrix.at(B).at(A) + double(a.first.getOriginWaitingMalus());
+        Truckmtx.unlock();
+        return tmp;
         //return Point::distance(a.first.getOrigin(),b.first.getOrigin()) + a.first.getOriginWaitingMalus();
     }
     else if (a.second && !b.second){
@@ -236,7 +238,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        return Truck::Matrix.at(B).at(A) + double(a.first.getOriginWaitingMalus());
+        Truckmtx.lock();
+        double tmp = Truck::Matrix.at(B).at(A) + double(a.first.getOriginWaitingMalus());
+        Truckmtx.unlock();
+        return tmp;
 
         //return Point::distance(a.first.getOrigin(),b.first.getDestination())+ a.first.getOriginWaitingMalus();
     }
@@ -249,7 +254,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        return Truck::Matrix.at(B).at(A) + double(a.first.getDestinationWaitingMalus());
+        Truckmtx.lock();
+        double tmp = Truck::Matrix.at(B).at(A) + double(a.first.getDestinationWaitingMalus());
+        Truckmtx.unlock();
+        return tmp;
 
         //return Point::distance(a.first.getDestination(),b.first.getOrigin())+ a.first.getDestinationWaitingMalus();
     }
@@ -262,7 +270,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        return Truck::Matrix.at(B).at(A)+ double(a.first.getDestinationWaitingMalus());
+        Truckmtx.lock();
+        double tmp = Truck::Matrix.at(B).at(A)+ double(a.first.getDestinationWaitingMalus());
+        Truckmtx.unlock();
+        return tmp;
 
         //return Point::distance(a.first.getDestination(),b.first.getDestination())+ a.first.getDestinationWaitingMalus();
     }
