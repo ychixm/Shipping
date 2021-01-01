@@ -2,7 +2,7 @@
 #define WAREHOUSE_H
 #include <iostream>
 #include <climits>
-#include <experimental/filesystem>
+#include <unistd.h>
 #include "Truck.h"
 #include "../situation/Shipping.h"
 
@@ -14,8 +14,7 @@ class Warehouse
 public:
     Warehouse(std::vector<Shipping> shipPoints,int trucks_number,std::default_random_engine randomEngine);
     void randomInsertion(int truck_id);
-    bool test_optimizeDistance(Shipping shipping,int truck_id);
-    //int randomFindLowestValue(std::vector<double> tab);
+    bool test_optimizeDistance(const Shipping& shipping,int truck_id);
     void switchInsertion();
     void smartInsertion();
     int smartFindLowestValue(std::vector<std::pair<double,int>> tab);

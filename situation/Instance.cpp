@@ -30,6 +30,7 @@ Instance::Instance(int &number_of_shipping,int &mapSize) {
         ));
         Instance::m_ID++;
     }
+    exportInstances(seed);
 }
 const Point &Instance::getDepot() const {
     return m_depot;
@@ -39,11 +40,11 @@ void Instance::setDepot(const Point &Depot) {
     m_depot = Depot;
 }
 
-const std::vector<std::vector<float>> &Instance::getDistanceMatrix() const {
+const std::vector<std::vector<double>> &Instance::getDistanceMatrix() const {
     return m_distanceMatrix;
 }
 
-void Instance::setDistanceMatrix(const std::vector<std::vector<float>> &DistanceMatrix) {
+void Instance::setDistanceMatrix(const std::vector<std::vector<double>> &DistanceMatrix) {
     m_distanceMatrix = DistanceMatrix;
 }
 
@@ -67,7 +68,7 @@ std::ostream &operator<<(std::ostream &os, const Instance& i) {
 *
 */
 void Instance::generateDistanceMatrix() {
-    std::vector<float> tmp;
+    std::vector<double> tmp;
 
     //set distance between the depot and himself which is 0
     tmp.emplace_back(0);
@@ -89,10 +90,10 @@ void Instance::generateDistanceMatrix() {
 * create a list with the distance between a Point and all the others.
 *
 * @param a Shipping and char to say if we calc for origin or destination.
-* @return list of distance as float.
+* @return list of distance as double.
 */
 
-std::vector<float> Instance::calculateDistance(const Shipping& s,char c){
+std::vector<double> Instance::calculateDistance(const Shipping& s,char c){
     Point actualPos;
     switch(c){
         case 'o':
@@ -106,7 +107,7 @@ std::vector<float> Instance::calculateDistance(const Shipping& s,char c){
             break;
     }
 
-    std::vector<float> tmp;
+    std::vector<double> tmp;
     tmp.emplace_back(Point::distance(actualPos,m_depot));
 
     for(const auto& destinationPoint: m_shippingPoints){
@@ -131,20 +132,12 @@ void Instance::showDestinationMatrix() {
     }
 }
 
-void Instance::writeTofile(Instance& instance, const std::string& fileName) {
-    std::ofstream file (fileName);
-    writeDestiantionTofile(instance,file);
-}
-void Instance::writeDestiantionTofile(Instance &instance, std::ofstream& write){
-    write << instance.m_shippingPoints.size() << std::endl;
-    for(const auto& point :instance.m_shippingPoints){
-        write << point.getName() <<';'<< point.getOrigin().getX() << ',' << point.getOrigin().getY()
-              << ";" << point.getDestination().getX() << ',' << point.getDestination().getY() << std::endl;
+void Instance::exportInstances(unsigned seed) {
+    std::ofstream file;
+    file.open("../instances/" + std::to_string(seed) + ".txt",std::ios::app);
+    file << "x:origin, y:origin; x:destination, y:destination\n" ;//x: 32, y:38;x: 56, y:54
+    for(const auto& p : m_shippingPoints){
+        file << p.getOrigin() << ";" << p.getDestination() << "\n";
     }
-    for(const auto& i : instance.m_distanceMatrix){
-        for(auto j : i){
-            write << j << ";";
-        }
-        write << std::endl;
-    }
+    file.close();
 }

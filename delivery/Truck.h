@@ -19,47 +19,40 @@ class Truck {
 private:
 
     int m_ID;
-    float m_distance;
-    float m_capacity;
+    double m_distance;
+    double m_capacity;
     std::list<std::pair<Shipping,bool> > m_steps;
     const int INITIAL_CAPACITY = 10;
 
-    //time start
-    //time finish
-
 public:
 
-    static std::vector<std::vector<float> > Matrix;
+    static std::vector<std::vector<double> > Matrix;
 
-    Truck(Shipping shipping, int id);
+    Truck(const Shipping& shipping, int id);
 
     int getID() const;
 
     void setID(int ID);
 
-    float getDistance() const;
+    double getDistance() const;
 
-    void setDistance(float distance);
+    void setDistance(double distance);
 
-    float getCapacity() const;
+    double getCapacity() const;
 
-    void setCapacity(float capacity);
+    void setCapacity(double capacity);
 
     const std::list<std::pair<Shipping,bool> > &getSteps() const;
 
     void setSteps(const std::list<std::pair<Shipping,bool> > &steps);
 
-    std::tuple<int,int,double> optimize_distance(Shipping shipping,std::default_random_engine randomEngine);
+    std::tuple<int,int,double> optimize_distance(const Shipping& shipping,std::default_random_engine randomEngine);
 
-    bool insertInTruck(Shipping shipping,double origin,double destination,double distance);
-
-    int findLowestValue(std::vector<double> tab);
-
-    std::pair<int,double> findLowestDistance_andValue(std::vector<double> tab);
+    bool insertInTruck(const Shipping& shipping,double origin,double destination,double distance);
 
     std::pair<int,double> randomLowestValue(std::vector<double> tab,std::default_random_engine randomEngine);
 
-    std::pair<int,double> findBestSpot(Shipping shipping, int start , bool origin,std::default_random_engine randomEngine);
+    std::pair<int,double> findBestSpot(const Shipping& shipping, int start , bool origin,std::default_random_engine randomEngine);
 
     static std::list<std::pair<Shipping, bool> > updatedListCopy(std::list<std::pair<Shipping, bool> > steps, int index, const Shipping& ship, bool origin);
 
@@ -68,8 +61,6 @@ public:
     static std::default_random_engine randomEngine;
 
     Point getBarycentre();
-
-    void exportSteps();
 };
 
 

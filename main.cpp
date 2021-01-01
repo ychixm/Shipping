@@ -4,22 +4,24 @@
 #include "delivery/Truck.h"
 #include <random>
 #include <thread>
-#include <mutex>
+#include <utility>
 #include"delivery/Warehouse.h"
-//TODO : add Vehicles
 
-std::mutex mtx;
 
-void calculate(const std::vector<Shipping> shipPoints,unsigned seed){
-    Warehouse warehouse(shipPoints,3, std::default_random_engine(seed));
+#define NUMBEROFTRUCKS 3
+#define NUMBEROFSHIPPING 10
+#define NUMBEROFTHREADS 100
+
+void calculate(std::vector<Shipping> shipPoints,unsigned seed){
+    Warehouse warehouse(std::move(shipPoints),NUMBEROFTRUCKS, std::default_random_engine(seed));
     warehouse.switchInsertion();
     warehouse.exportPath(seed);
 }
 
 int main() {
-    //stopwatch<> timer;
+    stopwatch<> timer;
 
-    int numberOfShipping = 10;
+    int numberOfShipping = NUMBEROFSHIPPING;
     int mapSize = 100;
     Instance inst(numberOfShipping,mapSize);
     std::cout << inst << std::endl;
@@ -27,45 +29,27 @@ int main() {
     inst.generateDistanceMatrix();
     inst.showDestinationMatrix();
     Truck::Matrix = inst.getDistanceMatrix();
-    //std::cout << "time to compute : "<< timer.elapsed_time() << " ms" << std::endl;
 
-    Warehouse warehouse(inst.getShippingPoint(),3, std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
-    warehouse.switchInsertion();
-
-    //std::thread one(calculate,inst.getShippingPoint(),0);
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::seed_seq seq{seed};
-    std::vector<std::uint32_t> seeds(20);
+    std::vector<std::uint32_t> seeds(NUMBEROFTHREADS);
     seq.generate(seeds.begin(), seeds.end());
 
-    std::default_random_engine randomEngine(seeds.at(0));
-    std::uniform_int_distribution<int> distribution(0,mapSize);
-    distribution(randomEngine);
-
-
     std::vector<std::thread> threads;
-    std::thread tmp(calculate, inst.getShippingPoint(), seeds.at(0));
-    tmp.join();
 
-    /*
-    for(int i =  0; i < 20; i++) {
-        std::thread tmp(calculate, inst.getShippingPoint(), seeds.at(i),*it);
+
+    for(int i =  0; i < NUMBEROFTHREADS; i++) {
+        std::thread tmp(calculate, inst.getShippingPoint(), seeds.at(i));
         threads.emplace_back(std::move(tmp));
-        std::cout << std::endl << "start " << i << std::endl;
-        it++;
+        //std::cout << std::endl << "start " << i << std::endl;
+
     }
 
-    for(int i = 0 ; i < 20 ; i++){
-        std::cout << "try join" << std::endl;
+    for(int i = 0 ; i < NUMBEROFTHREADS; i++){
         threads.at(i).join();
-        std::cout << "success join" << std::endl;
     }
-
-
-    for(auto resPointer : result){
-        std::cout << *resPointer << ", ";
-    }*/
-
+    auto tmp = timer.elapsed_time();
+    std::cout <<"time : " << tmp << " ns, " << tmp/(1e9) << " s" << std::endl;
     return 0;
 }

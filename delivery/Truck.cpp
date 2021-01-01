@@ -1,10 +1,10 @@
 #include "Truck.h"
 #include <climits>
 
-std::mutex Truckmtx;
-std::vector<std::vector<float> > Truck::Matrix = std::vector<std::vector<float> >();
+std::mutex TruckMtx;
+std::vector<std::vector<double> > Truck::Matrix = std::vector<std::vector<double> >();
 
-Truck::Truck(Shipping shipping,int id){
+Truck::Truck(const Shipping& shipping,int id):m_capacity(-1){
     m_steps.insert(m_steps.begin(),1,std::pair<Shipping,bool>(shipping,false));
     m_steps.insert(m_steps.begin(),1,std::pair<Shipping,bool>(shipping,true));
     m_distance = 0;
@@ -19,11 +19,11 @@ void Truck::setID(int ID) {
     m_ID = ID;
 }
 
-float Truck::getDistance() const {
+double Truck::getDistance() const {
     return m_distance;
 }
 
-void Truck::setDistance(float distance) {
+void Truck::setDistance(double distance) {
     Truck::m_distance = distance;
 }
 
@@ -35,15 +35,13 @@ void Truck::setSteps(const std::list<std::pair<Shipping,bool> > &steps) {
     Truck::m_steps = steps;
 }
 
-float Truck::getCapacity() const {
+double Truck::getCapacity() const {
     return m_capacity;
 }
 
-void Truck::setCapacity(float capacity) {
+void Truck::setCapacity(double capacity) {
     m_capacity = capacity;
 }
-
-std::default_random_engine Truck::randomEngine;
 
 // this function return a copy of the truck route and insert a point in this copy at the desired index
 
@@ -59,11 +57,10 @@ std::list<std::pair<Shipping, bool> > Truck::updatedListCopy(std::list<std::pair
 
 //this function return if a truck can accepts a shipping and if it's the case, it adds the shipping on the truck route
 
-std::tuple<int,int,double> Truck::optimize_distance(Shipping shipping,std::default_random_engine randomEngine){
+std::tuple<int,int,double> Truck::optimize_distance(const Shipping& shipping,std::default_random_engine randomEngine){
 
     std::pair<int,double> best_origin = findBestSpot(shipping,1,true,randomEngine);
     int index_origin = best_origin.first;
-
     std::pair<int,double> best_destination = findBestSpot(shipping,index_origin+1,false,randomEngine);
     int index_destination = best_destination.first;
     double distance_totale = best_destination.second;
@@ -73,7 +70,7 @@ std::tuple<int,int,double> Truck::optimize_distance(Shipping shipping,std::defau
 }
 
 //cette fonction permet d'ajouter un colis dans ce camion
-bool Truck::insertInTruck(Shipping shipping,double origin,double destination,double distance){
+bool Truck::insertInTruck(const Shipping& shipping,double origin,double destination,double distance){
     auto it = m_steps.begin();
     int index_origin = (int)origin;
     if (index_origin > 0) {
@@ -105,7 +102,7 @@ bool Truck::insertInTruck(Shipping shipping,double origin,double destination,dou
 //this function takes a shipping point(origin if origin==true, destination...) and the first index where we can insert it
 //she return the best spot of to insert the point
 
-std::pair<int,double> Truck::findBestSpot(Shipping shipping, int start , bool origin,std::default_random_engine randomEngine){
+std::pair<int,double> Truck::findBestSpot(const Shipping& shipping, int start , bool origin,std::default_random_engine randomEngine){
     std::vector<double> distance_list(start,INT_MAX);
     std::list<std::pair<Shipping,bool>> tableau_origin = m_steps;//ce tableau permet d'adapter le for qui suit selon si on a une origine ou une destination à inserer
     if(!origin){
@@ -141,19 +138,7 @@ std::pair<int,double> Truck::findBestSpot(Shipping shipping, int start , bool or
     return randomLowestValue(distance_list,randomEngine);
 }
 
-/*int Truck::findLowestValue(std::vector<double> tab) {
-    int value = INT_MAX;
-    int index = 0;
-    for(int i = 0; i < tab.size(); i++){
-        std::cout<<tab[i]<<std::endl;
-        if(tab[i] < value){
-            value = tab[i];
-            index = i;
-        }
-    }
-    return index;
-}*/
-
+/*
 std::pair<int,double> Truck::findLowestDistance_andValue(std::vector<double> tab) {
     int value = INT_MAX;
     int index = 0;
@@ -164,13 +149,13 @@ std::pair<int,double> Truck::findLowestDistance_andValue(std::vector<double> tab
         }
     }
     return std::pair<int,double>(index,value);
-}
+}*/
 
 std::pair<int,double>Truck::randomLowestValue(std::vector<double> tab,std::default_random_engine randomEngine){
     std::vector<std::pair<int,double>> lowestValues;
     for(int i = 0; i < tab.size(); i++){
         if(tab[i] < INT_MAX){
-            lowestValues.push_back(std::pair<int,double>(i,tab[i]));
+            lowestValues.emplace_back(i,tab[i]);
             //si la distance est éligible alors on l'ajoute au tableau
         }
     }
@@ -180,9 +165,6 @@ std::pair<int,double>Truck::randomLowestValue(std::vector<double> tab,std::defau
         return pair1.second < pair2.second;
     });
     //la boucle for qui suit permet de vérifier que le tri a réussi
-    /*for (const auto &pair : lowestValues) {
-        std::cout <<"pouuuuuuu" << pair.first << " = " << pair.second << std::endl;
-    }*/
     //on tire parmi les 4 meilleurs résultats si il existe
     int choice;
     if(lowestValues.size()>3){
@@ -210,7 +192,7 @@ Point Truck::getBarycentre(){
             Y = it_shipping->first.getDestination().getY();
         }
     }
-    return Point(int(X/(m_steps.size()-1)),int(Y/(m_steps.size()-1)));
+    return Point(int(X/int(m_steps.size()-1)),int(Y/int(m_steps.size()-1)));
 }
 
 double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::pair<Shipping, bool>& b) {
@@ -223,11 +205,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        Truckmtx.lock();
+        TruckMtx.lock();
         double tmp = Truck::Matrix.at(B).at(A) + double(a.first.getOriginWaitingMalus());
-        Truckmtx.unlock();
+        TruckMtx.unlock();
         return tmp;
-        //return Point::distance(a.first.getOrigin(),b.first.getOrigin()) + a.first.getOriginWaitingMalus();
     }
     else if (a.second && !b.second){
         int A = (a.first.getID()*2)+1;
@@ -238,12 +219,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        Truckmtx.lock();
+        TruckMtx.lock();
         double tmp = Truck::Matrix.at(B).at(A) + double(a.first.getOriginWaitingMalus());
-        Truckmtx.unlock();
+        TruckMtx.unlock();
         return tmp;
-
-        //return Point::distance(a.first.getOrigin(),b.first.getDestination())+ a.first.getOriginWaitingMalus();
     }
     else if (!a.second && b.second){
         int A = (a.first.getID()*2)+2;
@@ -254,12 +233,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        Truckmtx.lock();
+        TruckMtx.lock();
         double tmp = Truck::Matrix.at(B).at(A) + double(a.first.getDestinationWaitingMalus());
-        Truckmtx.unlock();
+        TruckMtx.unlock();
         return tmp;
-
-        //return Point::distance(a.first.getDestination(),b.first.getOrigin())+ a.first.getDestinationWaitingMalus();
     }
     else if (!a.second && !b.second){
         int A = (a.first.getID()*2)+2;
@@ -270,27 +247,10 @@ double Truck::distanceWithMalus(const std::pair<Shipping, bool>& a, const std::p
         if(b.first.getName() == "depot"){
             B = 0;
         }
-        Truckmtx.lock();
+        TruckMtx.lock();
         double tmp = Truck::Matrix.at(B).at(A)+ double(a.first.getDestinationWaitingMalus());
-        Truckmtx.unlock();
+        TruckMtx.unlock();
         return tmp;
-
-        //return Point::distance(a.first.getDestination(),b.first.getDestination())+ a.first.getDestinationWaitingMalus();
     }
-}
-
-void Truck::exportSteps(){
-    std::ofstream file;
-    file.open("C:/Users/nicol/Documents/4ème année/projetCplus_plus/data.txt",std::ios::app);
-    file << "truck:" << m_ID << ":";
-    for(const auto& e : m_steps){
-        if(e.second){
-            file << e.first.getName()+" o" + "," << e.first.getOrigin().getX() << "," << e.first.getOrigin().getY() << ":";
-        }
-        else{
-            file << e.first.getName()+" d" + "," << e.first.getDestination().getX() << "," << e.first.getDestination().getY() << ":";
-        }
-    }
-    file << "\n" ;
-    file.close();
+    return 0;
 }
